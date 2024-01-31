@@ -1,5 +1,5 @@
 import { Alert, Button, Modal, TextInput, Textarea } from "flowbite-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import Comment from "./Comment";
@@ -19,7 +19,7 @@ export default function CommentSection({ postId }) {
       return;
     }
     try {
-      const res = await fetch(`/api/comment/create`, {
+      const res = await fetch("/api/comment/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -30,12 +30,11 @@ export default function CommentSection({ postId }) {
           userId: currentUser._id,
         }),
       });
-
       const data = await res.json();
       if (res.ok) {
         setComment("");
         setCommentError(null);
-        setComments([...comments, data]);
+        setComments([data, ...comments]);
       }
     } catch (error) {
       setCommentError(error.message);
@@ -66,7 +65,6 @@ export default function CommentSection({ postId }) {
       const res = await fetch(`/api/comment/likeComment/${commentId}`, {
         method: "PUT",
       });
-
       if (res.ok) {
         const data = await res.json();
         setComments(
@@ -104,17 +102,14 @@ export default function CommentSection({ postId }) {
       const res = await fetch(`/api/comment/deleteComment/${commentId}`, {
         method: "DELETE",
       });
-
       if (res.ok) {
         const data = await res.json();
-
-        comments.filter((comment) => comment._id !== commentId);
+        setComments(comments.filter((comment) => comment._id !== commentId));
       }
     } catch (error) {
       console.log(error.message);
     }
   };
-
   return (
     <div className="max-w-2xl mx-auto w-full p-3">
       {currentUser ? (
@@ -129,14 +124,14 @@ export default function CommentSection({ postId }) {
             to={"/dashboard?tab=profile"}
             className="text-xs text-cyan-600 hover:underline"
           >
-            @ {currentUser.username}
+            @{currentUser.username}
           </Link>
         </div>
       ) : (
         <div className="text-sm text-teal-500 my-5 flex gap-1">
-          You must be logged in to comment
+          You must be signed in to comment.
           <Link className="text-blue-500 hover:underline" to={"/sign-in"}>
-            Sign in
+            Sign In
           </Link>
         </div>
       )}
@@ -146,7 +141,7 @@ export default function CommentSection({ postId }) {
           className="border border-teal-500 rounded-md p-3"
         >
           <Textarea
-            placeholder="Write a comment..."
+            placeholder="Add a comment..."
             rows="3"
             maxLength="200"
             onChange={(e) => setComment(e.target.value)}
@@ -201,7 +196,7 @@ export default function CommentSection({ postId }) {
         <Modal.Body>
           <div className="text-center">
             <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
-            <h3 className="text-lg text-gray-500 mb-5 dark:text-gray-400">
+            <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
               Are you sure you want to delete this comment?
             </h3>
             <div className="flex justify-center gap-4">
@@ -212,7 +207,7 @@ export default function CommentSection({ postId }) {
                 Yes, I'm sure
               </Button>
               <Button color="gray" onClick={() => setShowModal(false)}>
-                No, Cancel
+                No, cancel
               </Button>
             </div>
           </div>
