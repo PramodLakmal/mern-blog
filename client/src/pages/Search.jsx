@@ -1,6 +1,6 @@
 import { Button, Select, TextInput } from "flowbite-react";
 import { set } from "mongoose";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import PostCard from "../components/PostCard";
 
